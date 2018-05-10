@@ -160,3 +160,30 @@ def set_bill_amount(sender, instance, **kwargs):
 
     if sender is not Bill:
         bill.save()
+
+class Revenue(models.Model):
+    annee = models.IntegerField(default=2018, unique=True)
+    # january = models.FloatField(default=0.0)
+    # february= models.FloatField(default=0.0)
+    # march = models.FloatField(default=0.0)
+    # april = models.FloatField(default=0.0)
+    # may = models.FloatField(default=0.0)
+    # june = models.FloatField(default=0.0)
+    # july = models.FloatField(default=0.0)
+    # august = models.FloatField(default=0.0)
+    # september = models.FloatField(default=0.0)
+    # october = models.FloatField(default=0.0)
+    # november = models.FloatField(default=0.0)
+    # december = models.FloatField(default=0.0)
+    # total_revenue = models.FloatField(default=0.0)
+    # month = models.CharField(max_length=20)
+    # amount = models.FloatField(default=0.0)
+
+    def __str__(self):
+        return "Chiffre d'affaire"
+
+class Subscription(models.Model):
+    service = models.CharField(max_length=20)
+
+    def __str__(self):
+        return "Abonnement/Service"

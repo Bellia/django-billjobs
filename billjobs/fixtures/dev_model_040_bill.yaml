@@ -30,3 +30,147 @@
     isPaid: true
     user: 4
     number: F201704004
+
+- model: billjobs.bill
+  pk: 5
+  fields:
+    billing_date: 2017-04-03
+    isPaid: true
+    user: 2
+    number: F201704005
+
+- model: billjobs.bill
+  pk: 6
+  fields:
+    billing_date: 2017-05-04
+    isPaid: true
+    user: 4
+    number: F201705006
+
+- model: billjobs.bill
+  pk: 7
+  fields:
+    billing_date: 2017-06-04
+    isPaid: true
+    user: 4
+    number: F201706007
+
+- model: billjobs.bill
+  pk: 8
+  fields:
+    billing_date: 2017-06-05
+    isPaid: true
+    user: 3
+    number: F201706008
+
+- model: billjobs.bill
+  pk: 9
+  fields:
+    billing_date: 2017-07-04
+    isPaid: true
+    user: 1
+    number: F201707009
+
+- model: billjobs.bill
+  pk: 10
+  fields:
+    billing_date: 2017-07-04
+    isPaid: true
+    user: 2
+    number: F201707010
+
+- model: billjobs.bill
+  pk: 11
+  fields:
+    billing_date: 2017-04-04
+    isPaid: true
+    user: 3
+    number: F201707011
+
+- model: billjobs.bill
+  pk: 12
+  fields:
+    billing_date: 2017-08-04
+    isPaid: true
+    user: 4
+    number: F201708012
+
+- model: billjobs.bill
+  pk: 13
+  fields:
+    billing_date: 2017-09-04
+    isPaid: true
+    user: 4
+    number: F201709013
+
+- model: billjobs.bill
+  pk: 14
+  fields:
+    billing_date: 2017-10-04
+    isPaid: true
+    user: 3
+    number: F201710014
+
+- model: billjobs.bill
+  pk: 15
+  fields:
+    billing_date: 2017-11-23
+    isPaid: true
+    user: 3
+    number: F201711015
+
+- model: billjobs.bill
+  pk: 16
+  fields:
+    billing_date: 2017-12-04
+    isPaid: true
+    user: 2
+    number: F201712016
+
+- model: billjobs.bill
+  pk: 17
+  fields:
+    billing_date: 2018-01-04
+    isPaid: true
+    user: 4
+    number: F201801017
+
+- model: billjobs.bill
+  pk: 18
+  fields:
+    billing_date: 2018-02-04
+    isPaid: true
+    user: 4
+    number: F201802018
+
+- model: billjobs.bill
+  pk: 19
+  fields:
+    billing_date: 2018-03-04
+    isPaid: true
+    user: 4
+    number: F201803019
+
+- model: billjobs.bill
+  pk: 20
+  fields:
+    billing_date: 2018-04-04
+    isPaid: true
+    user: 4
+    number: F201804020
+
+- model: billjobs.bill
+  pk: 21
+  fields:
+    billing_date: 2018-04-19
+    isPaid: true
+    user: 1
+    number: F201804021
+
+- model: billjobs.bill
+  pk: 22
+  fields:
+    billing_date: 2018-05-04
+    isPaid: true
+    user: 2
+    number: F201805022

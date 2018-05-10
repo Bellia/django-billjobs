@@ -26,3 +26,129 @@
     bill: 4
     service: 1
     quantity: 1
+
+- model: billjobs.billline
+  pk: 6
+  fields:
+    bill: 5
+    service: 3
+    quantity: 2
+
+- model: billjobs.billline
+  pk: 7
+  fields:
+    bill: 6
+    service: 1
+    quantity: 1
+
+- model: billjobs.billline
+  pk: 8
+  fields:
+    bill: 7
+    service: 2
+    quantity: 1
+
+- model: billjobs.billline
+  pk: 9
+  fields:
+    bill: 8
+    service: 2
+    quantity: 4
+
+- model: billjobs.billline
+  pk: 10
+  fields:
+    bill: 9
+    service: 1
+    quantity: 1
+
+- model: billjobs.billline
+  pk: 11
+  fields:
+    bill: 10
+    service: 2
+    quantity: 5
+
+- model: billjobs.billline
+  pk: 12
+  fields:
+    bill: 11
+    service: 3
+    quantity: 1
+
+- model: billjobs.billline
+  pk: 13
+  fields:
+    bill: 12
+    service: 3
+    quantity: 2
+
+- model: billjobs.billline
+  pk: 14
+  fields:
+    bill: 13
+    service: 1
+    quantity: 1
+
+- model: billjobs.billline
+  pk: 15
+  fields:
+    bill: 14
+    service: 3
+    quantity: 3
+
+- model: billjobs.billline
+  pk: 16
+  fields:
+    bill: 15
+    service: 3
+    quantity: 3
+
+- model: billjobs.billline
+  pk: 17
+  fields:
+    bill: 16
+    service: 1
+    quantity: 1
+
+- model: billjobs.billline
+  pk: 18
+  fields:
+    bill: 17
+    service: 2
+    quantity: 1
+
+- model: billjobs.billline
+  pk: 19
+  fields:
+    bill: 18
+    service: 2
+    quantity: 5
+
+- model: billjobs.billline
+  pk: 20
+  fields:
+    bill: 19
+    service: 3
+    quantity: 1
+
+- model: billjobs.billline
+  pk: 21
+  fields:
+    bill: 20
+    service: 3
+    quantity: 3
+
+- model: billjobs.billline
+  pk: 22
+  fields:
+    bill: 21
+    service: 1
+    quantity: 1
+
+- model: billjobs.billline
+  pk: 23
+  fields:
+    bill: 22
+    service: 1
+    quantity: 1
