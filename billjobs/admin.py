@@ -42,6 +42,7 @@ class BillAdmin(admin.ModelAdmin):
     list_editable = ('isPaid',)
     list_filter = ('isPaid', )
     search_fields = ('user__first_name', 'user__last_name', 'number', 'amount')
+    ordering = ['-billing_date']
 
     def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
         field = super(BillAdmin, self).formfield_for_foreignkey(
@@ -75,20 +76,11 @@ class BillAdmin(admin.ModelAdmin):
     def paiement(self, obj):
         if obj.isPaid == False:
             lien = format_html(
-            '<a href="https://stripe.com">Payer sur Stripe</a>'
+            '<a href="https://stripe.com" target="_blank">Payer sur Stripe</a>'
             )
-            # lien = 'Payer sur Stripe'
             return lien
         else:
             return 'Effectué'
-
-    # def testt(self, foo):
-    #     # sequence = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-    #     # sequence = 1
-    #     # while sequence <= 12:
-    #     # for element in sequence:
-    #     # return Bill.objects.filter(billing_date__month=4, billing_date__year=2017, isPaid=True).aggregate(Sum('amount'))['amount__sum']
-    #     return Bill.objects.filter(billing_date__month=4, billing_date__year=2017, isPaid=True).aggregate(Sum('amount'))['amount__sum']
 
 
 class RequiredInlineFormSet(BaseInlineFormSet):
@@ -156,206 +148,154 @@ class ServiceAdmin(admin.ModelAdmin):
     list_editable = ('is_available',)
     list_filter = ('is_available',)
 
+
+current_year = timezone.now().year
+current_month = timezone.now().month
+previous_month = current_month - 1
+
+
 class RevenueAdmin(admin.ModelAdmin):
     model = Revenue
     # list_display = ('month', 'amount', 'total_revenue')
     list_display = ('annee', 'janvier', 'fevrier', 'mars', 'avril', 'mai',
     'juin', 'juillet', 'aout', 'septembre', 'octobre', 'novembre', 'decembre',
     'CA_annuel')
-    total = 0
+    ordering = ['-annee']
 
-    # Revenue.april.value() = 8000
-
-    def current_month(self, foo):
-        current_month = timezone.now().month
-
-    def total_rev(self, r):
-        total = 0
-        r = Revenue.objects.all()
-        for i in r:
-
-            return i
-
-
-    # def testt(self, obj):
-    #     if obj.annee == 2018:
-    #         obj.january = 30000
-    #         # obj.january.save()
-    #         return obj.january
-    #     else:
-    #         return 'Hello world'
 
     def CA_annuel(self, obj):
-        if obj.annee == 2018:
-            return Bill.objects.filter(billing_date__year=2018).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2017:
-            return Bill.objects.filter(billing_date__year=2017).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2016:
-            return Bill.objects.filter(billing_date__year=2016).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2015:
-            return Bill.objects.filter(billing_date__year=2015).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2014:
-            return Bill.objects.filter(billing_date__year=2014).aggregate(Sum('amount'))['amount__sum']
+
+        # current_month = timezone.now().month
+        # previous_month = current_month - 1
+        # current_year = timezone.now().year
+        if current_year == obj.annee:
+            data = (Bill.objects.filter(billing_date__year=current_year, billing_date__month__lte=previous_month).aggregate(Sum('amount'))['amount__sum']) / previous_month * 12
+            return format_html('CA prévisionnel <strong style="color: purple" title="Estimation du CA annuel : somme des mois finis divisée par le nombre de mois finis multipliés par 12">{}</strong>', data)
+            # return (Bill.objects.filter(billing_date__year=current_year, billing_date__month__lte=previous_month).aggregate(Sum('amount'))['amount__sum']) / previous_month * 12
+        else:
+            data =  Bill.objects.filter(billing_date__year=obj.annee).aggregate(Sum('amount'))['amount__sum']
+            return data
+
+    def monthly_revenue(self, obj, month):
+        data =  Bill.objects.filter(billing_date__month=month, billing_date__year=obj.annee).aggregate(Sum('amount'))['amount__sum']
+        if current_month == month and current_year == obj.annee:
+            return format_html('<strong style="color: purple">{}</strong>', data)
+        else:
+            return data
 
     def janvier(self, obj):
-        if obj.annee == 2018:
-            return Bill.objects.filter(billing_date__month=1, billing_date__year=2018).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2017:
-            return Bill.objects.filter(billing_date__month=1, billing_date__year=2017).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2016:
-            return Bill.objects.filter(billing_date__month=1, billing_date__year=2016).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2015:
-            return Bill.objects.filter(billing_date__month=1, billing_date__year=2015).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2014:
-            return Bill.objects.filter(billing_date__month=1, billing_date__year=2014).aggregate(Sum('amount'))['amount__sum']
+        return self.monthly_revenue(obj, 1)
+
 
     def fevrier(self, obj):
-        if obj.annee == 2018:
-            return Bill.objects.filter(billing_date__month=2, billing_date__year=2018).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2017:
-            return Bill.objects.filter(billing_date__month=2, billing_date__year=2017).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2016:
-            return Bill.objects.filter(billing_date__month=2, billing_date__year=2016).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2015:
-            return Bill.objects.filter(billing_date__month=2, billing_date__year=2015).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2014:
-            return Bill.objects.filter(billing_date__month=2, billing_date__year=2014).aggregate(Sum('amount'))['amount__sum']
+        m = 2
+        data =  Bill.objects.filter(billing_date__month=m, billing_date__year=obj.annee).aggregate(Sum('amount'))['amount__sum']
+        if current_month == m and current_year == obj.annee:
+            return format_html('<strong style="color: purple">{}</strong>', data)
+        else:
+            return data
 
     def mars(self, obj):
-        if obj.annee == 2018:
-            return Bill.objects.filter(billing_date__month=3, billing_date__year=2018).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2017:
-            return Bill.objects.filter(billing_date__month=3, billing_date__year=2017).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2016:
-            return Bill.objects.filter(billing_date__month=3, billing_date__year=2016).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2015:
-            return Bill.objects.filter(billing_date__month=3, billing_date__year=2015).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2014:
-            return Bill.objects.filter(billing_date__month=3, billing_date__year=2014).aggregate(Sum('amount'))['amount__sum']
+        m = 3
+        data =  Bill.objects.filter(billing_date__month=m, billing_date__year=obj.annee).aggregate(Sum('amount'))['amount__sum']
+        if current_month == m and current_year == obj.annee:
+            return format_html('<strong style="color: purple">{}</strong>', data)
+        else:
+            return data
 
     def avril(self, obj):
-        if obj.annee == 2018:
-            return Bill.objects.filter(billing_date__month=4, billing_date__year=2018).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2017:
-            return Bill.objects.filter(billing_date__month=4, billing_date__year=2017).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2016:
-            return Bill.objects.filter(billing_date__month=4, billing_date__year=2016).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2015:
-            return Bill.objects.filter(billing_date__month=4, billing_date__year=2015).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2014:
-            return Bill.objects.filter(billing_date__month=4, billing_date__year=2014).aggregate(Sum('amount'))['amount__sum']
+        m = 4
+        data =  Bill.objects.filter(billing_date__month=m, billing_date__year=obj.annee).aggregate(Sum('amount'))['amount__sum']
+        if current_month == m and current_year == obj.annee:
+            return format_html('<strong style="color: purple">{}</strong>', data)
+        else:
+            return data
 
     def mai(self, obj):
-        if obj.annee == 2018:
-            return Bill.objects.filter(billing_date__month=5, billing_date__year=2018).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2017:
-            return Bill.objects.filter(billing_date__month=5, billing_date__year=2017).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2016:
-            return Bill.objects.filter(billing_date__month=5, billing_date__year=2016).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2015:
-            return Bill.objects.filter(billing_date__month=5, billing_date__year=2015).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2014:
-            return Bill.objects.filter(billing_date__month=5, billing_date__year=2014).aggregate(Sum('amount'))['amount__sum']
+        m = 5
+        data = Bill.objects.filter(billing_date__month=m, billing_date__year=obj.annee).aggregate(Sum('amount'))['amount__sum']
+        if current_month == m and current_year == obj.annee:
+            return format_html('<strong style="color: purple">{}</strong>', data)
+        else:
+            return data
+
 
     def juin(self, obj):
-        if obj.annee == 2018:
-            return Bill.objects.filter(billing_date__month=6, billing_date__year=2018).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2017:
-            return Bill.objects.filter(billing_date__month=6, billing_date__year=2017).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2016:
-            return Bill.objects.filter(billing_date__month=6, billing_date__year=2016).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2015:
-            return Bill.objects.filter(billing_date__month=6, billing_date__year=2015).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2014:
-            return Bill.objects.filter(billing_date__month=6, billing_date__year=2014).aggregate(Sum('amount'))['amount__sum']
+        m = 6
+        data =  Bill.objects.filter(billing_date__month=m, billing_date__year=obj.annee).aggregate(Sum('amount'))['amount__sum']
+        if current_month == m and current_year == obj.annee:
+            return format_html('<strong style="color: purple">{}</strong>', data)
+        else:
+            return data
 
     def juillet(self, obj):
-        if obj.annee == 2018:
-            return Bill.objects.filter(billing_date__month=7, billing_date__year=2018).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2017:
-            return Bill.objects.filter(billing_date__month=7, billing_date__year=2017).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2016:
-            return Bill.objects.filter(billing_date__month=7, billing_date__year=2016).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2015:
-            return Bill.objects.filter(billing_date__month=7, billing_date__year=2015).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2014:
-            return Bill.objects.filter(billing_date__month=7, billing_date__year=2014).aggregate(Sum('amount'))['amount__sum']
+        m = 7
+        data =  Bill.objects.filter(billing_date__month=m, billing_date__year=obj.annee).aggregate(Sum('amount'))['amount__sum']
+        if current_month == m and current_year == obj.annee:
+            return format_html('<strong style="color: purple">{}</strong>', data)
+        else:
+            return data
 
     def aout(self, obj):
-        if obj.annee == 2018:
-            return Bill.objects.filter(billing_date__month=8, billing_date__year=2018).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2017:
-            return Bill.objects.filter(billing_date__month=8, billing_date__year=2017).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2016:
-            return Bill.objects.filter(billing_date__month=8, billing_date__year=2016).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2015:
-            return Bill.objects.filter(billing_date__month=8, billing_date__year=2015).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2014:
-            return Bill.objects.filter(billing_date__month=8, billing_date__year=2014).aggregate(Sum('amount'))['amount__sum']
+        m = 8
+        data =  Bill.objects.filter(billing_date__month=m, billing_date__year=obj.annee).aggregate(Sum('amount'))['amount__sum']
+        if current_month == m and current_year == obj.annee:
+            return format_html('<strong style="color: purple">{}</strong>', data)
+        else:
+            return data
 
     def septembre(self, obj):
-        if obj.annee == 2018:
-            return Bill.objects.filter(billing_date__month=9, billing_date__year=2018).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2017:
-            return Bill.objects.filter(billing_date__month=9, billing_date__year=2017).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2016:
-            return Bill.objects.filter(billing_date__month=9, billing_date__year=2016).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2015:
-            return Bill.objects.filter(billing_date__month=9, billing_date__year=2015).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2014:
-            return Bill.objects.filter(billing_date__month=9, billing_date__year=2014).aggregate(Sum('amount'))['amount__sum']
+        m = 9
+        data =  Bill.objects.filter(billing_date__month=m, billing_date__year=obj.annee).aggregate(Sum('amount'))['amount__sum']
+        if current_month == m and current_year == obj.annee:
+            return format_html('<strong style="color: purple">{}</strong>', data)
+        else:
+            return data
 
     def octobre(self, obj):
-        if obj.annee == 2018:
-            return Bill.objects.filter(billing_date__month=10, billing_date__year=2018).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2017:
-            return Bill.objects.filter(billing_date__month=10, billing_date__year=2017).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2016:
-            return Bill.objects.filter(billing_date__month=10, billing_date__year=2016).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2015:
-            return Bill.objects.filter(billing_date__month=10, billing_date__year=2015).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2014:
-            return Bill.objects.filter(billing_date__month=10, billing_date__year=2014).aggregate(Sum('amount'))['amount__sum']
+        m = 10
+        data =  Bill.objects.filter(billing_date__month=m, billing_date__year=obj.annee).aggregate(Sum('amount'))['amount__sum']
+        if current_month == m and current_year == obj.annee:
+            return format_html('<strong style="color: purple">{}</strong>', data)
+        else:
+            return data
 
     def novembre(self, obj):
-        if obj.annee == 2018:
-            return Bill.objects.filter(billing_date__month=1, billing_date__year=2018).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2017:
-            return Bill.objects.filter(billing_date__month=11, billing_date__year=2017).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2016:
-            return Bill.objects.filter(billing_date__month=11, billing_date__year=2016).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2015:
-            return Bill.objects.filter(billing_date__month=11, billing_date__year=2015).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2014:
-            return Bill.objects.filter(billing_date__month=11, billing_date__year=2014).aggregate(Sum('amount'))['amount__sum']
+        m = 11
+        data =  Bill.objects.filter(billing_date__month=m, billing_date__year=obj.annee).aggregate(Sum('amount'))['amount__sum']
+        if current_month == m and current_year == obj.annee:
+            return format_html('<strong style="color: purple">{}</strong>', data)
+        else:
+            return data
 
     def decembre(self, obj):
-        if obj.annee == 2018:
-            return Bill.objects.filter(billing_date__month=12, billing_date__year=2018).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2017:
-            return Bill.objects.filter(billing_date__month=12, billing_date__year=2017).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2016:
-            return Bill.objects.filter(billing_date__month=12, billing_date__year=2016).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2015:
-            return Bill.objects.filter(billing_date__month=12, billing_date__year=2015).aggregate(Sum('amount'))['amount__sum']
-        if obj.annee == 2014:
-            return Bill.objects.filter(billing_date__month=12, billing_date__year=2014).aggregate(Sum('amount'))['amount__sum']
-
+        m = 12
+        data =  Bill.objects.filter(billing_date__month=m, billing_date__year=obj.annee).aggregate(Sum('amount'))['amount__sum']
+        if current_month == m and current_year == obj.annee:
+            return format_html('<strong style="color: purple">{}</strong>', data)
+        else:
+            return data
 
 class SubscriptionAdmin(admin.ModelAdmin):
     model = Subscription
-    list_display = ('service', 'Abonnement_annuel')
+    list_display = ('service', 'Abonnement_annuel_2018', 'Abonnement_annuel_2017')
 
-    def Abonnement_annuel(self, obj):
-        if obj.service == 'Full Time':
-            return BillLine.objects.filter(service__is_available=True,
-            service__pk=1, bill__billing_date__year=2017).count()
-        if obj.service == 'Mid Time':
-            return BillLine.objects.filter(service__is_available=True,
-            service__pk=2, bill__billing_date__year=2017).count()
-        if obj.service == 'Meeting 1 day':
-            return BillLine.objects.filter(service__is_available=True,
-            service__pk=3, bill__billing_date__year=2017).count()
+    def Abonnement_annuel_2017(self, obj):
+        # if obj.service == 'Full Time':
+        #     return BillLine.objects.filter(service__is_available=True,
+        #     service__pk=1, bill__billing_date__year=2017).count()
+        # if obj.service == 'Mid Time':
+        #     return BillLine.objects.filter(service__is_available=True,
+        #     service__pk=2, bill__billing_date__year=2017).count()
+        # if obj.service == 'Meeting 1 day':
+        #     return BillLine.objects.filter(service__is_available=True,
+        #     service__pk=3, bill__billing_date__year=2017).count()
+        return BillLine.objects.filter(service__is_available=True,
+        service__name=obj.service, bill__billing_date__year=2017).count()
+
+    def Abonnement_annuel_2018(self, obj):
+        return BillLine.objects.filter(service__is_available=True,
+        service__name=obj.service, bill__billing_date__year=2018).count()
 
 
 admin.site.register(Bill, BillAdmin)

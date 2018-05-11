@@ -152,3 +152,38 @@
     bill: 22
     service: 1
     quantity: 1
+
+- model: billjobs.billline
+  pk: 24
+  fields:
+    bill: 23
+    service: 3
+    quantity: 2
+
+- model: billjobs.billline
+  pk: 25
+  fields:
+    bill: 24
+    service: 2
+    quantity: 1
+
+- model: billjobs.billline
+  pk: 26
+  fields:
+    bill: 25
+    service: 2
+    quantity: 2
+
+- model: billjobs.billline
+  pk: 27
+  fields:
+    bill: 26
+    service: 3
+    quantity: 1
+
+- model: billjobs.billline
+  pk: 28
+  fields:
+    bill: 27
+    service: 3
+    quantity: 1

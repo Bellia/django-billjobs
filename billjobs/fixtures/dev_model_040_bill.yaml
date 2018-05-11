@@ -174,3 +174,43 @@
     isPaid: true
     user: 2
     number: F201805022
+
+- model: billjobs.bill
+  pk: 23
+  fields:
+    billing_date: 2017-01-02
+    isPaid: true
+    user: 1
+    number: F201701023
+
+- model: billjobs.bill
+  pk: 24
+  fields:
+    billing_date: 2017-01-07
+    isPaid: true
+    user: 3
+    number: F201701024
+
+- model: billjobs.bill
+  pk: 25
+  fields:
+    billing_date: 2017-02-13
+    isPaid: true
+    user: 2
+    number: F201702025
+
+- model: billjobs.bill
+  pk: 26
+  fields:
+    billing_date: 2017-03-04
+    isPaid: true
+    user: 2
+    number: F201703026
+
+- model: billjobs.bill
+  pk: 27
+  fields:
+    billing_date: 2017-03-15
+    isPaid: true
+    user: 1
+    number: F201703027
