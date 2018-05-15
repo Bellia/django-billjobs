@@ -18,8 +18,11 @@ from .settings import BILLJOBS_DEBUG_PDF, BILLJOBS_BILL_LOGO_PATH, \
         BILLJOBS_BILL_PAYMENT_INFO, BILLJOBS_FORCE_SUPERUSER, \
         BILLJOBS_FORCE_USER_GROUP, BILLJOBS_SLACK_TOKEN, \
         BILLJOBS_SLACK_CHANNEL
-from .models import Bill, UserProfile
+from .models import Bill, UserProfile, BillLine
 from textwrap import wrap
+from django.utils import timezone
+from django.db.models import Sum
+from django.utils.html import format_html
 
 
 class UserSignupForm(ModelForm):
@@ -287,3 +290,66 @@ def generate_pdf(request, bill_id):
     buffer.close()
     response.write(genpdf)
     return response
+
+
+# set variables
+current_year = timezone.now().year
+previous_year = current_year - 1
+current_month = timezone.now().month
+previous_month = current_month - 1
+
+
+if current_month == 1:
+    current_month_name = 'Janvier'
+    previous_month_name = 'Décembre'
+elif current_month == 2:
+    current_month_name = 'Février'
+    previous_month_name = 'Janvier'
+elif current_month == 3:
+    current_month_name = 'Mars'
+    previous_month_name = 'Février'
+elif current_month == 4:
+    current_month_name = 'Avril'
+    previous_month_name = 'Mars'
+elif current_month == 5:
+    current_month_name = 'Mai'
+    previous_month_name = 'Avril'
+elif current_month == 6:
+    current_month_name = 'Juin'
+    previous_month_name = 'Mai'
+elif current_month == 7:
+    current_month_name = 'Juillet'
+    previous_month_name = 'Juin'
+elif current_month == 8:
+    current_month_name = 'Août'
+    previous_month_name = 'Juillet'
+elif current_month == 9:
+    current_month_name = 'Septembre'
+    previous_month_name = 'Août'
+elif current_month == 10:
+    current_month_name = 'Octobre'
+    previous_month_name = 'September'
+elif current_month == 11:
+    current_month_name = 'Novembre'
+    previous_month_name = 'October'
+elif current_month == 12:
+    month_name = 'December'
+    previous_month_name = 'November'
+
+
+def get_monthly_revenue(request, month, year):
+    monthly_revenue =  Bill.objects.filter(billing_date__month=month, billing_date__year=year).aggregate(Sum('amount'))['amount__sum']
+    if monthly_revenue == None:
+        monthly_revenue = "-"
+    if month == current_month and year == current_year:
+        return format_html('<strong style="color: purple">{}</strong>', monthly_revenue)
+    else:
+        return monthly_revenue
+
+
+def statistics(request):
+    return render(request, 'billjobs/statistics.html',
+    {'current_month_name': current_month_name,
+    'current_year': current_year,
+    'current_month_revenue': get_monthly_revenue(request, current_month, current_year),
+    } )
