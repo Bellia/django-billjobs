@@ -307,10 +307,7 @@ def get_monthly_revenue(request, month, year):
     monthly_revenue =  Bill.objects.filter(billing_date__month=month, billing_date__year=year).aggregate(Sum('amount'))['amount__sum']
     if monthly_revenue == None:
         monthly_revenue = "-"
-    if month == current_month and year == current_year:
-        return format_html('<strong style="color: purple">{}</strong>', monthly_revenue)
-    else:
-        return monthly_revenue
+    return monthly_revenue
 
 
 def statistics(request):
